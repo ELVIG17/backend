@@ -18,15 +18,29 @@ router.post(
   async function (req: Request<{}, {}, RegisterBody>, res: Response) {
     try {
       const { username, email, password } = req.body;
+
+   
+      
+      
       if (!email || !password || !username)
         throw new Error("Email or password error1");
-      if (email) {
-      } // есть ли такой пользователь в бд
+
+      const makedUser = await prisma.user.findFirst({where: {OR:[{email}, {username}]}})
+
+         if(makedUser){
+        return res.status(400).json({message: "User already exists"})
+      }
+      
       const hashedPass = await hashPass(password);
-      const newUser = prisma.user.create({
+      const newUser = await prisma.user.create({
         data: { username, email, password: hashedPass },
+        select: {
+          id: true,
+          username: true, 
+          email: true,  
+        }
       });
-      return res.status(200).json({ text: newUser });
+      return res.status(201).json(newUser);
     } catch (e) {
       return res.status(400).json({ error: e });
     }
