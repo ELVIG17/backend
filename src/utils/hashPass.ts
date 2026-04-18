@@ -5,7 +5,7 @@ export async function hashPass(pass: string): Promise<string> {
 }
 
 
-export async function comparePass (plain:string, hash:string ) {
+export async function comparePass (plain:string, hash:string ): Promise <boolean> {
   return await bcrypt.compare(plain, hash)
   
 }
