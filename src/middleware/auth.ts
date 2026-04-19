@@ -12,7 +12,7 @@ interface UserPayLoad {
     email:string;
 }
 
-const jwtMiddleWare = (req: Request, res: Response, next: NextFunction ) => {
+export function jwtMiddleWare  (req: Request, res: Response, next: NextFunction )  {
 
     const token = req.cookies.accessToken
 
@@ -22,8 +22,8 @@ const jwtMiddleWare = (req: Request, res: Response, next: NextFunction ) => {
 
 
         try {
-            const decoded = jwt.verify(token, Jwt_SECRET) as JwtPayload
-            req.user = {id: decoded.id}
+            const userId = jwt.verify(token, Jwt_SECRET) as JwtPayload
+            req.user = {id: userId.id}
             next()
 
         }
@@ -34,8 +34,7 @@ const jwtMiddleWare = (req: Request, res: Response, next: NextFunction ) => {
             
         }
 
-        next()
+        return next()
     }
 
 
- 

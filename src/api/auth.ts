@@ -5,6 +5,8 @@
   import jwt from "jsonwebtoken"
   import { JsonWebTokenError } from "jsonwebtoken";
 import { error } from "node:console";
+import { jwtMiddleWare } from "../middleware/auth";
+import { isErrored } from "node:stream";
 
   interface LoginBody {
     username?: string;
@@ -60,7 +62,7 @@ import { error } from "node:console";
  
  
   router.post("/logout", async function (req: Request, res: Response) {
-    res.clearCookie("access_Token", { 
+    res.clearCookie("accessToken", { 
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax", 
@@ -112,4 +114,22 @@ import { error } from "node:console";
   }
 );
 
+router.get('/me', jwtMiddleWare, async (req: Request, res: Response) => {
+  const userId = req.user!.id
+
+  const   user  = await prisma.user.findUnique({
+    where:{id: userId}, 
+    select: {
+      id: true, 
+      username: true, 
+      email: true 
+    }
+  })
+
+  if(!user) {
+    return res.status(404).json({message: "User not found"})
+  }
+
+  return  res.json(user)
+})
   export default router;
