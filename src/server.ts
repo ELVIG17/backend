@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 import authRouter from "./api/auth";
 import postsRouter from "./api/posts";
-import messagesRouter from "./api/messages";
+import messagesRouter from "./api/message";
 
 const app = express();
 
